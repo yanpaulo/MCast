@@ -21,7 +21,9 @@ namespace UserApp.UWP
         {
             this.InitializeComponent();
 
+            ZXing.Net.Mobile.Forms.WindowsUniversal.ZXingScannerViewRenderer.Init();
             LoadApplication(new UserApp.App());
+
         }
     }
 }
