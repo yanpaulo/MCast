@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Página Inicial"
+             x:Class="UserApp.Views.StartPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry x:Name="IdEntry"></Entry>
+            <Button Text="Registrar" Clicked="Button_Clicked"></Button>
+            <Button Text="Registrar com QR" Clicked="QR_Clicked"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
