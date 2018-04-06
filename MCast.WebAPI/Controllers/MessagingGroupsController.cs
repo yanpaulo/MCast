@@ -39,8 +39,8 @@ namespace MCast.WebAPI.Controllers
         [HttpPost("MessagingGroups/SendMessage/{id}")]
         public async Task <IActionResult> SendMessage(int id, [FromBody]SendMessageBodyWrapper body)
         {
-            var props = new Dictionary<string, string> { { id.ToString(), body.Message } };
-            await NotificationService.Hub.SendTemplateNotificationAsync(props);
+            var props = new Dictionary<string, string> { { "message", body.Message } };
+            await NotificationService.Hub.SendTemplateNotificationAsync(props, $"group:{id}");
 
             return Ok();
         }
