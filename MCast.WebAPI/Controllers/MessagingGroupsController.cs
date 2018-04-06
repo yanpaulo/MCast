@@ -9,6 +9,7 @@ using MCast.WebAPI.Data;
 using MCast.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using MCast.WebAPI.Services;
 
 namespace MCast.WebAPI.Controllers
 {
@@ -21,6 +22,27 @@ namespace MCast.WebAPI.Controllers
         {
             _context = context;
 
+        }
+
+        [AllowAnonymous]
+        [HttpGet("api/groups/{id}/messages")]
+        public IActionResult GetMessagesForGroup(int id)
+        {
+            var messages = _context.GroupMessages
+                .Where(m => m.MessagingGroupId == id)
+                .OrderByDescending(m => m.Sent)
+                .Take(20);
+
+            return Ok(messages);
+        }
+
+        [HttpPost]
+        public async Task <IActionResult> SendMessage(int id, [FromBody]string message)
+        {
+            var props = new Dictionary<string, string> { { id.ToString(), message } };
+            await NotificationService.Hub.SendTemplateNotificationAsync(props);
+
+            return Ok();
         }
 
         // GET: MessagingGroups
