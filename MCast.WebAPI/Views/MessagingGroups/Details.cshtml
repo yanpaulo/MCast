@@ -34,18 +34,27 @@
 @section Scripts {
     <script>
     $(function () {
-        $('#qrcode').qrcode('@ViewBag.Id');
+        $('#qrcode').qrcode('@Model.Id');
     });
     $("#messageSubmit").click(function () {
-        var id = '@ViewBag.Id';
+        var id = '@Model.Id';
         var message = $("#message").val();
+        alert(message);
         if (message) {
-            $.post("../SendMessage/" + id, { message: message }, function () {
-                $("#message").val('');
-
-            }).fail(function () {
-                alert('Não foi possível enviar a mensagem.');
-            });
+            $.ajax(
+                {
+                    url: "../SendMessage/" + id,
+                    method: "POST",
+                    cache: false,
+                    data: JSON.stringify({message: message}),
+                    contentType: "application/json",
+                    success: function () {
+                        $("#message").val('');
+                    },
+                    error: function () {
+                        alert('Não foi possível enviar a mensagem.');
+                    }
+                });
         }
     });
     </script>

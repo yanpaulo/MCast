@@ -36,10 +36,10 @@ namespace MCast.WebAPI.Controllers
             return Ok(messages);
         }
 
-        [HttpPost]
-        public async Task <IActionResult> SendMessage(int id, [FromBody]string message)
+        [HttpPost("MessagingGroups/SendMessage/{id}")]
+        public async Task <IActionResult> SendMessage(int id, [FromBody]SendMessageBodyWrapper body)
         {
-            var props = new Dictionary<string, string> { { id.ToString(), message } };
+            var props = new Dictionary<string, string> { { id.ToString(), body.Message } };
             await NotificationService.Hub.SendTemplateNotificationAsync(props);
 
             return Ok();
@@ -210,5 +210,10 @@ namespace MCast.WebAPI.Controllers
         {
             return user.MessagingGroups.Any(g => g.Id == groupId);
         }
+    }
+
+    public class SendMessageBodyWrapper
+    {
+        public string Message { get; set; }
     }
 }
