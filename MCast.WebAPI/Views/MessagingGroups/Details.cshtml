@@ -34,7 +34,7 @@
 @section Scripts {
     <script>
     $(function () {
-        jquery('#qrcode').qrcode('@ViewBag.Id');
+        $('#qrcode').qrcode('@ViewBag.Id');
     });
     $("#messageSubmit").click(function () {
         var id = '@ViewBag.Id';
