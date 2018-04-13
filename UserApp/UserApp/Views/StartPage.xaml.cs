@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.NotificationHubs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,13 +15,11 @@ namespace UserApp.Views
     {
         private bool isScanning;
         private MobileBarcodeScanner scanner;
-        private NotificationHubClient hub;
 
         public StartPage()
         {
             InitializeComponent();
             scanner = new MobileBarcodeScanner();
-            hub = NotificationHubClient.CreateClientFromConnectionString("Endpoint=sb://yanscorp.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=MVZlt7280W+ncv+ad1QoA8Y5GG5bxQpB/8zTPe9YnBo=", "MCastNotificationHub");
         }
 
 
@@ -54,21 +51,17 @@ namespace UserApp.Views
 
         private async void CleanButton_Clicked(object sender, EventArgs args)
         {
-            var registrations = await hub.GetAllRegistrationsAsync(100);
-            foreach (var registration in registrations)
-            {
-                await hub.DeleteRegistrationAsync(registration);
-            }
+            var ws = new WebService();
+            await ws.UnRegister(await DependencyService.Get<INotificationService>().GetHandleAsync(""));
             await DisplayAlert("Aviso", "Removido", "Ok");
         }
 
 
         private async Task RegisterAsync(string id)
         {
-            var registration = await DependencyService.Get<INotificationService>().GetRegistrationDescriptionAsync(new[] { $"group:{id}" });
-            registration.RegistrationId = await hub.CreateRegistrationIdAsync();
-            //registration.id
-            var description = await hub.CreateOrUpdateRegistrationAsync(registration);
+            var ns = DependencyService.Get<INotificationService>();
+            var ws = new WebService();
+            await ws.Register(await ns.GetHandleAsync(id));
             await DisplayAlert("Aviso", "Registrado", "Ok");
         }
 

@@ -10,6 +10,7 @@ using MCast.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using MCast.WebAPI.Services;
+using Microsoft.Azure.NotificationHubs;
 
 namespace MCast.WebAPI.Controllers
 {
@@ -34,6 +35,37 @@ namespace MCast.WebAPI.Controllers
                 .Take(20);
 
             return Ok(messages);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("api/groups/register")]
+        public async Task<IActionResult> Register([FromBody]ClientData data)
+        {
+            var hub = NotificationService.Hub;
+
+            var payload = @"<toast><visual><binding template=""ToastText01""><text id=""1"">$(message)</text></binding></visual></toast>";
+            var registration = new WindowsTemplateRegistrationDescription(data.Handle, payload, new[] { $"group:{data.Group}" });
+            registration.RegistrationId = await hub.CreateRegistrationIdAsync();
+            var description = await hub.CreateOrUpdateRegistrationAsync(registration);
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("api/groups/unregister")]
+        public async Task<IActionResult> Unregister(ClientData data)
+        {
+            var hub = NotificationService.Hub;
+            var regs =
+                (await hub.GetRegistrationsByChannelAsync(data.Handle, 100));
+                //.Where(r => r.Tags.Any(t => t == $"group:{data.Group}"));
+
+            foreach (var r in regs)
+            {
+                await hub.DeleteRegistrationAsync(r);
+            }
+
+            return Ok();
         }
 
         [HttpPost("MessagingGroups/SendMessage/{id}")]
@@ -210,6 +242,12 @@ namespace MCast.WebAPI.Controllers
         {
             return user.MessagingGroups.Any(g => g.Id == groupId);
         }
+    }
+
+    public class ClientData
+    {
+        public string Handle { get; set; }
+        public string Group { get; set; }
     }
 
     public class SendMessageBodyWrapper

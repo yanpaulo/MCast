@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.NotificationHubs;
 using UserApp.Services;
 using UserApp.UWP.Services;
 using Windows.Networking.PushNotifications;
@@ -13,11 +12,13 @@ namespace UserApp.UWP.Services
 {
     public class PNSService : INotificationService
     {
-        public async Task<RegistrationDescription> GetRegistrationDescriptionAsync(IEnumerable<string> tags)
+        public async Task<ClientData> GetHandleAsync(string group)
         {
-            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-            var payload = @"<toast><visual><binding template=""ToastText01""><text id=""1"">$(message)</text></binding></visual></toast>";
-            return new WindowsTemplateRegistrationDescription(channel.Uri, payload, tags);
+            return new ClientData
+            {
+                Handle = (await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync()).Uri,
+                Group = group
+            };
         }
     }
 }
