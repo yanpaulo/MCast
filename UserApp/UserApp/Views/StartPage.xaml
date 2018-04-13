@@ -8,6 +8,7 @@
             <Entry x:Name="IdEntry"></Entry>
             <Button Text="Registrar" Clicked="Button_Clicked"></Button>
             <Button Text="Registrar com QR" Clicked="QR_Clicked"></Button>
+            <Button Text="Desregistrar" Clicked="CleanButton_Clicked"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
